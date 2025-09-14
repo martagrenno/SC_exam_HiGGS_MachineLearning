@@ -230,7 +230,7 @@ The metrics on the validation set are reported in the table below, and the loos 
 
 | Loss per epoch `CNN_21ft` |
 | --- |
-![alt text]Results/CNN_21ft_loss.png)
+![alt text](Results/CNN_21ft_loss.png)
 *Validation loos per epoch for `CNN_21ft`*
 
 As expected the CNN did not perform well. Indeed the program stopped the learning because the validation loss, as visible in the graph, began to increase rapidly. This makes it difficult to trust the obtained accuracy and loss, as the reduction observed between epochs 5 and 8 might be due to random fluctuations. However, it is interesting to note that the problem seems to be overfitting: while the training loss continued to decrease, the validation loss increased. This indicates that the model is actually learning patterns from the training data. For future work, it could be valuable to introduce dropout between the convolutional layers to reduce overfitting and potentially enable the CNN to produce reliable predictions.
