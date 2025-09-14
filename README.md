@@ -64,7 +64,7 @@ by Pythia and detector response simulated by Delphes.
 In the data set the first column is the binary label and the following 28 columns are numerical features. The first 21 features (columns 2-22) are kinematic properties measured by the particle detectors in the accelerator. The last seven features are functions of the first 21 features; these are high-level features derived by physicists to help discriminate between the two classes. 
 The low-level features show some distinguishing characteristics, but our knowledge of the different intermediate states of the two processes allows us to construct other features which better capture the differences.
 
-This project assumes a similar structure and lets you select subsets of columns via compact ranges in the configuration (for example use_features: "1-21" selects the first 21 feature columns after the label). Class labels are presented in reports using the names from config.yaml (e.g., ["Background", "Signal"]).
+
 
 
 ### Data exploration
