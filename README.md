@@ -56,6 +56,8 @@ To clone the repository locally:
 
 ```bash
 $ git clone https://github.com/martagrenno/SC_exam_HiGGS_MachineLearning.git
+```
+
 ---
 
 ## The HIGGS classification problem
