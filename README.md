@@ -89,7 +89,7 @@ In summary, the figure provides an overview of the dataset and shows **how signa
 In this second figure below we can see the **correlation matrix** of all input features used in the machine learning model.  
 Each entry quantifies the linear correlation between two variables, with values ranging from **-1** (perfect anti-correlation) to **+1** (perfect correlation).  
 
-![](correlation_map.png)
+![](README_images/correlation_map.png)
 
 
 - Most features exhibit **low pairwise correlations**, suggesting that they provide complementary information to the classifier.  
@@ -173,7 +173,7 @@ For both the models, we report the metrics we obtained  on the validation in the
 
 |Loss per epoch `MLP_21ft_3l` and `MLP_21ft_4l`|
 |---|
-![alt text](3l_4l_loos.png)
+![alt text](README_images/3l_4l_loos.png)
 *Right validation loos per epoch for `MLP_21ft_3l`, left validation loss per epoch for `MLP_21ft_4l`*
 
 
@@ -190,7 +190,7 @@ The metrics on the validation set are reported in the table below, and the loos 
 
 |Loss per epoch `MLP_21ft_3l_larger`|
 |---|
-![alt text](Model_outputs/MLP_21ft_3l_larger/MLP_21ft_3l_larger_traing_metrics/MLP_21ft_3l_larger_loss.png)
+![alt text]Results/MLP_21ft_3l_larger/MLP_21ft_3l_larger_traing_metrics/MLP_21ft_3l_larger_loss.png)
 *Validation loos per epoch for `MLP_21ft_3l_larger`*
 
 
@@ -210,7 +210,7 @@ Then we moved to consider the whole dataset composed of both low-level and high-
 
 | Loss per epoch `MLP_28ft` |
 | --- |
-![alt text](Model_outputs/MLP_28ft/MLP_28ft_traing_metrics/MLP_28ft_loss.png)
+![alt text](Results/MLP_28ft/MLP_28ft_traing_metrics/MLP_28ft_loss.png)
 *Validation loos per epoch for `MLP_28ft`*
 
 As we expected, the metrics are comparable with the results that we obtained with the first two models despite the reduced dimensions in terms of depth and number of neurons. We also emphasize that a single training epoch was approximately six times faster than that of the four-layer model `MLP_21ft_4l`, demonstrating a significant improvement in computational efficiency.
