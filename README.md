@@ -1,5 +1,5 @@
 <!-- omit from toc -->
-# Automated Training and Evaluation of Neural Networks via Configurable Python Scripts - an application to HIGGS
+# A machine learning application to the HIGGS binary classification
 
 The goal of this project is to develop a python script capable of processing a dataset, splitting it into train and test, and then automatically training and saving multiple neural networks model-either multilayer perceptron (MLP) or convolution neural network (CNN)-given their specifications in a configuration file. Afterward, a second script will use the trained models to make predictions on the test set, save them and display the relevant performance metrics.
 
