@@ -77,13 +77,9 @@ Each subplot corresponds to a physical variable (e.g. transverse momentum `pT`, 
 
 
 
-- The overlapping histograms highlight **how well each feature separates signal from background**.  
-- Some variables (e.g. `jet_b_tag`) show clear differences between signal and background, making them highly discriminative.  
+- From these overlapping histograms of the feautures we can say that there is not a clear difference between background and signal.
+- Some variables (e.g. `jet_b_tag`) show some differences between signal and background, making them more discriminative.  
 - Other variables (e.g. `eta`, `phi`) look more similar, meaning they are less powerful on their own, but still valuable when combined in the model.  
-- This visualization helps justify the chosen feature set and assess their relevance before training the classifier.
-
-In summary, the figure provides an overview of the dataset and shows **how signal and background differ across the selected features**.
-
 
 
 In this second figure below we can see the **correlation matrix** of all input features used in the machine learning model.  
@@ -96,9 +92,7 @@ Each entry quantifies the linear correlation between two variables, with values 
 - Some moderate correlations are observed, for instance between **jet transverse momenta** (e.g. `jet_1_pt` and `jet_2_pt`), which is expected due to event kinematics.  
 - The **b-tagging scores** appear largely uncorrelated with other kinematic variables, confirming their role as independent discriminants.  
 - The correlation matrix is a valuable diagnostic tool for identifying **redundant features** that may not add significant information, and for ensuring that the model does not rely excessively on highly correlated variables.  
-- While low correlations are desirable, some degree of correlation can encode **physically meaningful relationships** (e.g. conservation laws, jet multiplicity effects).  
 
-This visualization provides an overview of the interdependence among features, helping to validate the feature set and to guide further **feature engineering** or **dimensionality reduction** strategies if required.
 
 
 ### The models
@@ -139,7 +133,7 @@ Here, we report the architectures of the models used to make predictions on the 
 <!-- omit from toc -->
 #### MLP_28ft
 
-For this model we changed only the **used features** to 1-28, in order to include both the low lev and the high lev features.
+For this model we changed only the **used features** to 1-28, in order to include both the low level and the high level features.
 
 1. Dense(512, ReLU) + Dropout(0.3)
 2. Dense(256, ReLU) + Dropout(0.2)
@@ -161,9 +155,9 @@ For this model we changed only the **used features** to 1-28, in order to includ
 
 #### MLPs on the low level features
 
-We started by working on the database by using the first 21 features only, which are the low level features. As a first step we tried two different MLP, with 3 and 4 fully connected (Dense) layers, namely [`MLP_21ft_3l`](#mlp_21ft_3l) and [`MLP_21ft_4l`](mlp_21ft_4l). Both models consist of fully connected layers with the ReLU activation function. We chose ReLU because it generally provides greater stability when training deep neural networks. The number of neurons was arranged in an inverted-pyramid fashion: the early layers capture low-level or raw patterns from the input features, while the deeper layers combine them into increasingly abstract and high-level representations. Since abstract concepts often require fewer dimensions to be expressed, the number of neurons can be progressively reduced in the later layers. Furthermore since the plateau was not reached in the previous trial, we increased the learning speed from 0.001 to 0.003.
+We started by working on the database by using the first 21 features only, which are the low level features. As a first step we tried two different MLP, with 3 and 4 fully connected (Dense) layers, namely [`MLP_21ft_3l`](#mlp_21ft_3l) and [`MLP_21ft_4l`](mlp_21ft_4l). Both models consist of fully connected layers with the ReLU activation function. We chose ReLU because it generally provides greater stability when training deep neural networks. The number of neurons was arranged in an inverted-pyramid fashion: the early layers capture low-level or raw patterns from the input features, while the deeper layers combine them into increasingly abstract and high-level representations. Since abstract concepts often require fewer dimensions to be expressed, the number of neurons can be progressively reduced in the later layers. 
 
-For both the models, we report the metrics we obtained  on the validation in the table below, alongside with the loss graph per epoch
+For both the models, we report the metrics we obtained  on the validation set in the table below, alongside with the loss graph per epoch
 
 | Metric | `MLP_21ft_3l`  | `MLP_21ft_4l` |
 | -------| ------------- | ------------- |
@@ -177,7 +171,7 @@ For both the models, we report the metrics we obtained  on the validation in the
 *Right validation loos per epoch for `MLP_21ft_3l`, left validation loss per epoch for `MLP_21ft_4l`*
 
 
-As we can see, despite requiring twice the training time, the four-layers model achieved only a marginal improvement in the metrics. Furthermore, from the graph, we notice that neither model reach a plateau.This suggested us that, over 100 epochs, increasing the number of layers does not necessary lead to performance gains.
+As we can see, despite requiring twice the training time, the four-layers model achieved only a marginal improvement in the metrics. Furthermore, from the graph, we notice that neither model reach a plateau. This suggested us that, over 100 epochs, increasing the number of layers does not necessary lead to performance gains.
 Given this, we hypothesized that the model need a richer low-level representation. Thus we designed a third model ([`MLP_21ft_3l_larger`](#mlp_21ft_3l_larger)) with three layers in which the first layer was larger than in the previous trained 3-layers model. The increase in the first layer size is intended to potentially allow the network to capture more complex interactions and correlations between the input features.  
 
 The metrics on the validation set are reported in the table below, and the loos per epoch in the graph below:
@@ -193,8 +187,8 @@ The metrics on the validation set are reported in the table below, and the loos 
 ![alt text](Results/MLP_21ft_3l_larger_loss.png)
 *Validation loos per epoch for `MLP_21ft_3l_larger`*
 
-
-We observe that the metrics are remarkably worst than both those of `MPL_21ft_3l` and `MLP_21ft_4l`, triggering the early stop at epoch 50. This result, in combination with the previous finding, suggests that network performance does not increase linearly with depth or the number of neurons. Therefore, for further improving should focus on fine-tuning the activation functions and layer dimensions, as well as increasing the number of training epochs to achieve the best possible loss and accuracy. Unfortunately, we were limited by the available hardware and could not extend the number of epochs, which would have been necessary for this final step.
+Furthermore since the plateau was not reached in the previous trial, we increased the learning speed from 0.001 to 0.003.
+We observe that the metrics are remarkably worst than both those of `MPL_21ft_3l` and `MLP_21ft_4l`, triggering the early stop at epoch 50. This result, in combination with the previous finding, suggests that network performance does not increase linearly with depth or the number of neurons. Therefore, for further improving we should focus on fine-tuning the activation functions and layer dimensions, as well as increasing the number of training epochs to achieve the best possible loss and accuracy. Unfortunately, we were limited by the available hardware and could not extend the number of epochs, which would have been necessary for this final step.
 
 
 
@@ -213,14 +207,14 @@ Then we moved to consider the whole dataset composed of both low-level and high-
 ![alt text](Results/MLP_28ft_loss.png)
 *Validation loos per epoch for `MLP_28ft`*
 
-As we expected, the metrics are comparable with the results that we obtained with the first two models despite the reduced dimensions in terms of depth and number of neurons. We also emphasize that a single training epoch was approximately six times faster than that of the four-layer model `MLP_21ft_4l`, demonstrating a significant improvement in computational efficiency.
+As we expected, the metrics are comparable with the results that we obtained with the first two models despite the reduced dimensions. We also emphasize that a single training epoch was approximately six times faster than that of the 4-layer model `MLP_21ft_4l`, demonstrating a significant improvement in computational efficiency.
 
-#### CNN on the lo-level features
+#### CNN on the low-level features
 
 As a final experiment, we tested how a CNN on this binary classification task. CNNs are particularly effective at recognizing local patterns, which is why they are widely used for image recognition and time-series analysis.
 Although the HIGGS dataset is tabular, we decided to test whether a CNN could capture local interactions among the features. By treating the input features as a one-dimensional sequence, 1D convolutional layers can detect interactions between nearby features. So we built the model [`CNN_21ft`](#cnn_21ft), consisting of two convolution layers followed by a two-layers MLP, which combines the relations learned by the convolutional layers to produce the final predictions.
 
-The metrics on the validation set are reported in the table below, and the loos per epoch in the graph below:
+The metrics on the validation set are reported in the table below, and the loss per epoch in the graph below:
 
 | Metric | `CNN_21ft`|
 | -------| ------------- |
@@ -237,7 +231,7 @@ As expected the CNN did not perform well. Indeed the program stopped the learnin
 
 ### Results on the test dataset
 
-All trained models were evaluated on the previously held-out test dataset. The performance metrics for each model—precision, recall, and F1-score—are summarized in the tables below.
+All trained models were evaluated on the previously held-out test dataset. The performance metrics for each model (precision, recall, and F1-score) are summarized in the tables below.
 Since the HIGGS dataset is simulated and nearly noise-free, we do not expect substantial differences between validation and test performance. Accordingly, our initial expectation was that the `MLP_21ft_3l`, `MLP_21ft_4l` and `MLP_28ft` models would achieve the best results.
 
 We showcase the metrics in the tables below:
@@ -292,6 +286,8 @@ We showcase the metrics in the tables below:
 The `MLP_21ft_4l` model achieved the highest overall performance, with F1-scores of 0.76 and 0.80 for classes 0 and 1, respectively. The slightly smaller `MLP_21ft_3l` model showed comparable results, indicating that reducing the number of layers from four to three does not substantially degrade performance.
 The `MLP_28ft` model, which includes both low-level and high-level features, achieved performance similar to the first two models. This confirms our expectations based on the validation results: incorporating high-level features enables accurate predictions even with smaller, faster models.
 Finally the `CNN_21ft` model showed the lowest metrics across all models. However, as previously mentioned, it suffered from overfitting, addressing this issue could potentially allow it to reach performance comparable to the MLPs.
+For a complete overview of the perfomance of this work, it is possible to examinate teh confusion matrix and roc curve in the  [Results](Results/) folder.
+
 
 ## The Code
 
@@ -356,10 +352,11 @@ produce a network structured as:
 - The dataset must be provided as a **CSV file**.  
 - **Column names are ignored**: only column indices are used.  
 - The **first column (index 0)** must always represent the target label.  
-- It is possible to set `epochs=0`, in this case, the model will not be trained. This setting acts as a comment-like placeholder in the config file;
+- It is possible to set `epochs=0`, in this case, the model will not be trained. This setting acts as a comment-like placeholder in the config file.
 - The `use_features` can be provided as:  
-  - A list of indices, e.g. `[1, 2, 9]`.  
-  - A range or combination of ranges, expressed as a string, e.g. `"1-3, 9-25"`.  
+  - A list of indices, e.g. `[1, 2, 9]`;
+  - A range or combination of ranges, expressed as a string, e.g. `"1-3, 9-25"`.
+  
 
 We underline that different models can be trained on different subsets of the available features, as defined in the `use_features` field of the configuration file. Each model carries its own epochs, batch size, learning rate, early stopping settings and validation split. The configuration is parsed and validated with **Pydantic** ([`config_loader.py`](Include/config_loader.py)). If a value is inconsistent, the program reports a validation error before training starts.
 
@@ -373,12 +370,12 @@ $ python train.py
 
 More specifically, `train.py` performs the following steps in order:
 
-1. Reads the `config.yaml` file, and validates the inputs;
+1. Reads the `config.yaml` file, and validates the inputs.
 2. Loads the datasets:
-    - If both `train.csv` and `test.csv` are present, it loads them directly;
-    - Otherwise, it reads the input dataset specified in the configuration, splits it into training and testing sets, and saves them as `train.csv` and `test.csv`;
+    - If both `train.csv` and `test.csv` are present, it loads them directly.
+    - Otherwise, it reads the input dataset specified in the configuration,normalize its feautures, splits it into training and testing sets, and saves them as `train.csv` and `test.csv`;
 3. Prepares the train/validation split according to each model’s `validation_size` parameter.
-4. Builds and trains each neural network defined in the configuration, one at a time;
+4. Builds and trains each neural network defined in the configuration, one at a time.
 5. Saves the trained models as `.keras` files in the `Model_outputs` folder, along with plots of loss, accuracy, and ROC curves generated during training.
 
 Models configured with epochs=0 are intentionally skipped; a readable warning is emitted to make this explicit while still keeping the pipeline running.
