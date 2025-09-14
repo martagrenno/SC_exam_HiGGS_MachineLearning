@@ -64,7 +64,7 @@ This project assumes a similar structure and lets you select subsets of columns 
 The figure below shows the distribution of the **28 features** used to train the machine learning model.  
 Each subplot corresponds to a physical variable (e.g. transverse momentum `pT`, pseudorapidity `eta`, angle `phi`, b-tagging, etc.) and compares the values for **signal** (blue) and **background** (orange).
 
-![](data_visualization.png)
+![](README_images/data_visualization.png)
 
 
 
@@ -81,7 +81,7 @@ In summary, the figure provides an overview of the dataset and shows **how signa
 In this second figure below we can see the **correlation matrix** of all input features used in the machine learning model.  
 Each entry quantifies the linear correlation between two variables, with values ranging from **-1** (perfect anti-correlation) to **+1** (perfect correlation).  
 
-![](correlation_map.png)
+![](README_images/correlation_map.png)
 
 
 - Most features exhibit **low pairwise correlations**, suggesting that they provide complementary information to the classifier.  
@@ -168,7 +168,7 @@ For both the models, we report the metrics we obtained  on the validation in the
 
 |Loss per epoch|
 |---|
-![alt text](3l_4l_loos.png)
+![alt text](README_images/3l_4l_loos.png)
 *Right validation loos per epoch for MLP_21ft_3l, left validation loss per epoch for MLP_21ft_4l*
 
 
