@@ -72,7 +72,7 @@ This project assumes a similar structure and lets you select subsets of columns 
 The figure below shows the distribution of the **28 features** used to train the machine learning model.  
 Each subplot corresponds to a physical variable (e.g. transverse momentum `pT`, pseudorapidity `eta`, angle `phi`, b-tagging, etc.) and compares the values for **signal** (blue) and **background** (orange).
 
-![](data_visualization.png)
+![](README_images/data_visualization.png)
 
 
 
