@@ -1,3 +1,7 @@
+"""
+Functions of the pipline to be used in the train.py
+"""
+
 import os
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
@@ -48,4 +52,5 @@ def data_split(df: pd.DataFrame = None, test_size: float = 0.2 , random_seed: in
         print("\033[94mtrain.csv and test.csv already exist, reading them instead\033[0m")
         train = pd.read_csv("train.csv", header=None, dtype=float)
         test = pd.read_csv("test.csv", header=None, dtype=float)
+
     return (train, test)
