@@ -1,3 +1,7 @@
+"""
+Functions used inside test.py
+"""
+
 import pandas as pd
 import warnings
 import os
@@ -10,6 +14,9 @@ from Include.nn_class import TFNeuralNetworkClassifier
 
 
 def test_loader(config_path, output_dir):
+    """
+    Load the config for the test, read the test.csv and verify if the output folder exists.
+    """
     try:
         with warnings.catch_warnings(record=True):
             cfg = load_config(config_path)
@@ -37,6 +44,9 @@ def test_loader(config_path, output_dir):
 
 
 def model_loader(path, epochs):
+    """
+    Load a .keras file, return the model.
+    """
     try:
         with warnings.catch_warnings(record=True) as wlist:
             model = TFNeuralNetworkClassifier(model=keras.models.load_model(path))
@@ -52,6 +62,9 @@ def model_loader(path, epochs):
 
 
 def make_prediction(df_test, use_feature, model, model_name, prediction_dir):
+    """
+    Apply the model to the test.csv, and make predictions, return them as a dictionary containing the true value, the predicted probability and the predicted class
+    """
     X_test = df_test.loc[:, use_feature]
     y_test = df_test.loc[:, 0]
 
@@ -72,3 +85,4 @@ def make_prediction(df_test, use_feature, model, model_name, prediction_dir):
     prediction_df.to_csv(os.path.join(prediction_dir, f"{model_name}_predictions.csv"), index=False)
 
     return result
+
