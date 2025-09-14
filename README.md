@@ -13,9 +13,17 @@ To show how the code can be used, we will tests various neural network models to
 - [The HIGGS classification problem](#the-higgs-classification-problem)
   - [Data exploration](#data-exploration)
   - [The models](#the-models)
-  - [Results](#results)
+  - [The Training](#the-training)
     - [MLPs on the low level features](#mlps-on-the-low-level-features)
     - [MLP on both low-level and high-level features](#mlp-on-both-low-level-and-high-level-features)
+    - [CNN on the lo-level features](#cnn-on-the-lo-level-features)
+  - [Results on the test dataset](#results-on-the-test-dataset)
+    - [`MLP_21ft_4l`](#mlp_21ft_4l-1)
+    - [`MLP_21ft_3l`](#mlp_21ft_3l-1)
+    - [`MLP_21ft_3l_larger`](#mlp_21ft_3l_larger-1)
+    - [`MLP_28ft`](#mlp_28ft-1)
+    - [`CNN_21ft`](#cnn_21ft-1)
+  - [Summary of accuracy and AUC](#summary-of-accuracy-and-auc)
 - [The Code](#the-code)
   - [The Configuration File (config.yaml)](#the-configuration-file-configyaml)
   - [The train.py](#the-trainpy)
@@ -93,16 +101,14 @@ Each entry quantifies the linear correlation between two variables, with values 
 This visualization provides an overview of the interdependence among features, helping to validate the feature set and to guide further **feature engineering** or **dimensionality reduction** strategies if required.
 
 
-
 ### The models
 
-Models are defined declaratively in config.yaml. The two MLP entries illustrate dense networks of different depths, while the CNN entry demonstrates how to prepend simple 1D convolutional layers with optional pooling before a dense head. The final layer is a single neuron with sigmoid activation suitable for binary cross-entropy. Early stopping and learning-rate scheduling can be enabled via the patience parameters in the configuration. Feature importance can be approximated from the absolute first-layer weights for MLPs and saved as a horizontal bar chart for quick interpretability. 
+Here, we report the architectures of the models used to make predictions on the HIGGS dataset. For further details on their configurations and the performance achieved, please refer to the following sections.
 
 - **Features**: 1-21, only the low level features
 - **Number of epochs**: 100 (limited by our hardware)
 - **Learning rate**: 0.001
 - **Early stop patience**: 5
-- **Plateau reduction**: 5
 - **Validation size**: 0.2
 <!-- omit from toc -->
 #### MLP_21ft_3l
@@ -145,14 +151,13 @@ For this model we changed only the **used features** to 1-28, in order to includ
 - Convolution stack:
   1. Conv1D(filters=128, kernel_size=5)
   2. Conv1D(filters=64, kernel_size=5)
-  3. GlobalAveragePooling1D
 - Dense head:
-  4. Dense(512, ReLU) + Dropout(0.3)
-  5. Dense(256, ReLU) + Dropout(0.2)
-  6. Dense(1, Sigmoid)
+  1. Dense(512, ReLU) + Dropout(0.3)
+  2. Dense(256, ReLU) + Dropout(0.2)
+  3. Dense(1, Sigmoid)
 
 
-### Results
+### The Training
 
 #### MLPs on the low level features
 
@@ -166,10 +171,10 @@ For both the models, we report the metrics we obtained  on the validation in the
 | Validation accuracy| 0.77 |0.78  |
 | Validation AUC | 0.85 |0.86 |
 
-|Loss per epoch|
+|Loss per epoch `MLP_21ft_3l` and `MLP_21ft_4l`|
 |---|
 ![alt text](3l_4l_loos.png)
-*Right validation loos per epoch for MLP_21ft_3l, left validation loss per epoch for MLP_21ft_4l*
+*Right validation loos per epoch for `MLP_21ft_3l`, left validation loss per epoch for `MLP_21ft_4l`*
 
 
 As we can see, despite requiring twice the training time, the four-layers model achieved only a marginal improvement in the metrics. Furthermore, from the graph, we notice that neither model reach a plateau.This suggested us that, over 100 epochs, increasing the number of layers does not necessary lead to performance gains.
@@ -183,10 +188,10 @@ The metrics on the validation set are reported in the table below, and the loos 
 | Validation accuracy| 0.73 |
 | Validation AUC | 0.80 |
 
-|Loss per epoch|
+|Loss per epoch `MLP_21ft_3l_larger`|
 |---|
 ![alt text](Model_outputs/MLP_21ft_3l_larger/MLP_21ft_3l_larger_traing_metrics/MLP_21ft_3l_larger_loss.png)
-*Validation loos per epoch for MLP_21ft_3l_larger*
+*Validation loos per epoch for `MLP_21ft_3l_larger`*
 
 
 We observe that the metrics are remarkably worst than both those of `MPL_21ft_3l` and `MLP_21ft_4l`, triggering the early stop at epoch 50. This result, in combination with the previous finding, suggests that network performance does not increase linearly with depth or the number of neurons. Therefore, for further improving should focus on fine-tuning the activation functions and layer dimensions, as well as increasing the number of training epochs to achieve the best possible loss and accuracy. Unfortunately, we were limited by the available hardware and could not extend the number of epochs, which would have been necessary for this final step.
@@ -203,8 +208,94 @@ Then we moved to consider the whole dataset composed of both low-level and high-
 | Validation accuracy| 0.76 |
 | Validation AUC | 0.85 |
 
+| Loss per epoch `MLP_28ft` |
+| --- |
+![alt text](Model_outputs/MLP_28ft/MLP_28ft_traing_metrics/MLP_28ft_loss.png)
+*Validation loos per epoch for `MLP_28ft`*
+
+As we expected, the metrics are comparable with the results that we obtained with the first two models despite the reduced dimensions in terms of depth and number of neurons. We also emphasize that a single training epoch was approximately six times faster than that of the four-layer model `MLP_21ft_4l`, demonstrating a significant improvement in computational efficiency.
+
+#### CNN on the lo-level features
+
+As a final experiment, we tested how a CNN on this binary classification task. CNNs are particularly effective at recognizing local patterns, which is why they are widely used for image recognition and time-series analysis.
+Although the HIGGS dataset is tabular, we decided to test whether a CNN could capture local interactions among the features. By treating the input features as a one-dimensional sequence, 1D convolutional layers can detect interactions between nearby features. So we built the model [`CNN_21ft`](#cnn_21ft), consisting of two convolution layers followed by a two-layers MLP, which combines the relations learned by the convolutional layers to produce the final predictions.
+
+The metrics on the validation set are reported in the table below, and the loos per epoch in the graph below:
+
+| Metric | `CNN_21ft`|
+| -------| ------------- |
+| Validation loss| 0.59 |
+| Validation accuracy| 0.70 |
+| Validation AUC | 0.77 |
+
+| Loss per epoch `CNN_21ft` |
+| --- |
+![alt text](Model_outputs/CNN_21ft/CNN_21ft_traing_metrics/CNN_21ft_loss.png)
+*Validation loos per epoch for `CNN_21ft`*
+
+As expected the CNN did not perform well. Indeed the program stopped the learning because the validation loss, as visible in the graph, began to increase rapidly. This makes it difficult to trust the obtained accuracy and loss, as the reduction observed between epochs 5 and 8 might be due to random fluctuations. However, it is interesting to note that the problem seems to be overfitting: while the training loss continued to decrease, the validation loss increased. This indicates that the model is actually learning patterns from the training data. For future work, it could be valuable to introduce dropout between the convolutional layers to reduce overfitting and potentially enable the CNN to produce reliable predictions.
+
+### Results on the test dataset
+
+All trained models were evaluated on the previously held-out test dataset. The performance metrics for each model—precision, recall, and F1-score—are summarized in the tables below.
+Since the HIGGS dataset is simulated and nearly noise-free, we do not expect substantial differences between validation and test performance. Accordingly, our initial expectation was that the `MLP_21ft_3l`, `MLP_21ft_4l` and `MLP_28ft` models would achieve the best results.
+
+We showcase the metrics in the tables below:
+
+#### `MLP_21ft_4l`
+
+| Class  | Precision | Recall | F1-Score |
+|--------|-----------|--------|----------|
+| 0.0    | 0.78      | 0.74   | 0.76     |
+| 1.0    | 0.78      | 0.81   | 0.80     |
+
+#### `MLP_21ft_3l`
+
+| Class  | Precision | Recall | F1-Score |
+|--------|-----------|--------|----------|
+| 0.0    | 0.77      | 0.73   | 0.75     |
+| 1.0    | 0.77      | 0.81   | 0.79     |
+
+#### `MLP_21ft_3l_larger`
+
+| Class  | Precision | Recall | F1-Score |
+|--------|-----------|--------|----------|
+| 0.0    | 0.74      | 0.65   | 0.69     |
+| 1.0    | 0.72      | 0.79   | 0.76     |
+
+#### `MLP_28ft`
+
+| Class  | Precision | Recall | F1-Score |
+|--------|-----------|--------|----------|
+| 0.0    | 0.75      | 0.74   | 0.75     |
+| 1.0    | 0.77      | 0.78   | 0.78     |
+
+#### `CNN_21ft`
+
+| Class  | Precision | Recall | F1-Score |
+|--------|-----------|--------|----------|
+| 0.0    | 0.69      | 0.66   | 0.67     |
+| 1.0    | 0.71      | 0.73   | 0.72     |
+
+
+### Summary of accuracy and AUC 
+
+|Model| Accuracy | AUC |
+|---|---| ---|
+|`MLP_21ft_4l`|0.78|0.85|
+|`MLP_21ft_3l`|0.77|0.86|
+|`MLP_21ft_3l_larger`|0.73 |0.80|
+|`MLP_28ft`|0.76|0.85|
+| `CNN_21ft` |0.80|0.77|
+
+
+The `MLP_21ft_4l` model achieved the highest overall performance, with F1-scores of 0.76 and 0.80 for classes 0 and 1, respectively. The slightly smaller `MLP_21ft_3l` model showed comparable results, indicating that reducing the number of layers from four to three does not substantially degrade performance.
+The `MLP_28ft` model, which includes both low-level and high-level features, achieved performance similar to the first two models. This confirms our expectations based on the validation results: incorporating high-level features enables accurate predictions even with smaller, faster models.
+Finally the `CNN_21ft` model showed the lowest metrics across all models. However, as previously mentioned, it suffered from overfitting, addressing this issue could potentially allow it to reach performance comparable to the MLPs.
 
 ## The Code
+
+In this section, we describe in detail how the code works: how models are built, trained, and tested, as well as how they can be configured.
 
 The project revolves around two entry points, `train.py` for training and `test.py` for evaluation, the class and functions used by the two codes are contained in the folder [include](Include/). Typically one run `train.py` once to produce saved `.keras` models and then run `test.py` to generate predictions, plots and metrics on the held-out test data. The architecture and hyperparameters of the neural networks are specified in the `config.yaml` file, which allows flexible model configuration without modifying the codebase. Moreover, if multiple models are defined in the configuration file,  both `train.py` and `test.py` are able to handle them sequentially, saving each trained model and evaluating all of them in turn.
 
@@ -330,6 +421,9 @@ $ python test.py
 
 ## Conclusions
 
+In this project, we developed a configurable Python pipeline for training and evaluating neural networks on the HIGGS dataset, including both multilayer perceptrons (MLPs) and a convolutional neural network (CNN). The system allows flexible specification of architectures, hyperparameters, and feature subsets via a single configuration file, enabling efficient experimentation without modifying the codebase.
 
-This repository provides a compact, configuration-first workflow to train and evaluate neural networks for HIGGS-like binary classification. By separating configuration from code and standardizing outputs (saved models, metrics, plots and prediction CSVs), it becomes easy to reproduce results, compare architectures and iterate quickly. If you plan to extend the work, consider threshold optimization for operating-point selection, calibration analysis, and automated hyperparameter sweeps driven by multiple config variants. Contributions and suggestions are welcome.
+Our tests show that fully connected MLPs outperform the CNN in this tabular classification task. Moderate-depth networks, such as `MLP_21ft_3l` and `MLP_21ft_4l`, are sufficient to capture the relevant patterns in the data.
+Including high-level features with the model `MLP_28ft` allows to achieve comparable performance while significantly reducing computational cost. The CNN, although capable of learning, suffered from overfitting and underperformed compared to the MLPs, highlighting that convolutional architectures are less suited for purely tabular data.
 
+We saw that increasing depth or neuron count does not guarantee better performance, this emphasize the importance of selecting appropriate architectures and fine-tune hyperparameters. Future work could focus on improving CNN performance via regularization, exploring alternative architectures, or further optimizing MLP designs to balance accuracy and efficiency.
