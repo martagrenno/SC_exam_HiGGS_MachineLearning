@@ -1,3 +1,7 @@
+"""
+Definition of pydantic classes to make impunt validation.
+"""
+
 from pydantic import BaseModel, PositiveInt, NonNegativeInt , FilePath, Field, ValidationInfo, field_validator
 from typing import Tuple, List, Dict, Union, Sequence, Optional
 import yaml
@@ -44,18 +48,21 @@ class ModelConfig(BaseModel):
 
     @field_validator("epochs")
     def warn_if_zero_epochs(cls, v, info: ValidationInfo):
+        """
+        Verify if the ephocs is given equal to 0, if so rise a warning.
+        """
         if v == 0:
-            #warnings.filterwarnings("ignore", category=UserWarning)
-            #print(f"\033[38;5;208m[INPUT WARNING]\033[0m '{info.data.get('name', '?')}' will not be trained (epochs=0). Default weights will be used.")
             warnings.warn(
                 f"\033[38;5;208m[INPUT WARNING]\033[0m '{info.data.get('name', '?')}' will not be trained (epochs=0). Default weights will be used.",
                 UserWarning
             )
-            #warnings.filterwarnings("default", category=UserWarning)
         return v
 
     @field_validator("use_features", mode="before")
     def parse_use_features(cls, v):
+        """
+        Parse the use-features and rise an error if contain the colun 0 which must be the label column.
+        """
         if isinstance(v, str):
             v = parse_ranges(v)
         if isinstance(v, (list, tuple)):
@@ -66,6 +73,9 @@ class ModelConfig(BaseModel):
     
     @field_validator("conv_pool_size")
     def validate_and_pad_conv_pool_size(cls, v, info: ValidationInfo):
+        """
+        Verify if the conv_pool_size has the correct length.
+        """
         conv_layers = info.data.get("conv_layers")
         use_features = info.data.get("use_features")
         expected_len = len(conv_layers)
@@ -86,6 +96,9 @@ class ModelConfig(BaseModel):
 
     @field_validator("dropout_layers")
     def check_dropout(cls, v, info: ValidationInfo):
+        """
+        Verify if the dropout matches the length of the hidden_layers.
+        """
         if not all(0 <= x < 1 for x in v):
             raise ValueError("All dropout_layers values must be greater than or equal to 0 and less than 1.")
         hidden_layers = info.data.get("hidden_layers")
@@ -104,6 +117,10 @@ class GlobalConfig(BaseModel):
     model_parameters: List[ModelConfig]
 
 def load_config(path="config.yaml") -> GlobalConfig:
+    """
+    Reads the config.yaml
+    """
     with open(path) as f:
         data = yaml.safe_load(f)
+
     return GlobalConfig(**data)
