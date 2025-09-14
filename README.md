@@ -190,7 +190,7 @@ The metrics on the validation set are reported in the table below, and the loos 
 
 |Loss per epoch `MLP_21ft_3l_larger`|
 |---|
-![alt text]Results/MLP_21ft_3l_larger/MLP_21ft_3l_larger_traing_metrics/MLP_21ft_3l_larger_loss.png)
+![alt text](Results/MLP_21ft_3l_larger_loss.png)
 *Validation loos per epoch for `MLP_21ft_3l_larger`*
 
 
@@ -210,7 +210,7 @@ Then we moved to consider the whole dataset composed of both low-level and high-
 
 | Loss per epoch `MLP_28ft` |
 | --- |
-![alt text](Results/MLP_28ft/MLP_28ft_traing_metrics/MLP_28ft_loss.png)
+![alt text](Results/MLP_28ft_loss.png)
 *Validation loos per epoch for `MLP_28ft`*
 
 As we expected, the metrics are comparable with the results that we obtained with the first two models despite the reduced dimensions in terms of depth and number of neurons. We also emphasize that a single training epoch was approximately six times faster than that of the four-layer model `MLP_21ft_4l`, demonstrating a significant improvement in computational efficiency.
@@ -230,7 +230,7 @@ The metrics on the validation set are reported in the table below, and the loos 
 
 | Loss per epoch `CNN_21ft` |
 | --- |
-![alt text](Model_outputs/CNN_21ft/CNN_21ft_traing_metrics/CNN_21ft_loss.png)
+![alt text]Results/CNN_21ft_loss.png)
 *Validation loos per epoch for `CNN_21ft`*
 
 As expected the CNN did not perform well. Indeed the program stopped the learning because the validation loss, as visible in the graph, began to increase rapidly. This makes it difficult to trust the obtained accuracy and loss, as the reduction observed between epochs 5 and 8 might be due to random fluctuations. However, it is interesting to note that the problem seems to be overfitting: while the training loss continued to decrease, the validation loss increased. This indicates that the model is actually learning patterns from the training data. For future work, it could be valuable to introduce dropout between the convolutional layers to reduce overfitting and potentially enable the CNN to produce reliable predictions.
