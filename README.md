@@ -30,7 +30,7 @@ To show how the code can be used, we will tests various neural network models to
   - [The test.py](#the-testpy)
 - [Conclusions](#conclusions)
 
-## Requirements
+## Requirements abd how to run the code
 
 This project requires **Python 3.11.13 or later** and the following Python packages:
 
@@ -56,6 +56,17 @@ To clone the repository locally:
 
 ```bash
 $ git clone https://github.com/martagrenno/SC_exam_HiGGS_MachineLearning.git
+cd SC_exam_HiGGS_MachineLearning.git
+```
+To run the code without changing anything in the config.yaml you can do:
+
+```bash
+$ python train.py
+```
+and then for the test part:
+
+```bash
+$ python test.py
 ```
 
 ---
