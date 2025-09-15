@@ -56,7 +56,7 @@ To clone the repository locally:
 
 ```bash
 $ git clone https://github.com/martagrenno/SC_exam_HiGGS_MachineLearning.git
-cd SC_exam_HiGGS_MachineLearning.git
+$ cd SC_exam_HiGGS_MachineLearning.git
 ```
 To run the code without changing anything in the config.yaml you can do:
 
