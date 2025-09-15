@@ -9,7 +9,7 @@ To show how the code can be used, we will tests various neural network models to
 <!-- omit from toc -->
 ## Table of contents
 
-- [Requirements](#requirements)
+- [Requirements and run the code](#requirements)
 - [The HIGGS classification problem](#the-higgs-classification-problem)
   - [Data exploration](#data-exploration)
   - [The models](#the-models)
@@ -30,7 +30,7 @@ To show how the code can be used, we will tests various neural network models to
   - [The test.py](#the-testpy)
 - [Conclusions](#conclusions)
 
-## Requirements abd how to run the code
+## Requirements and run the code
 
 This project requires **Python 3.11.13 or later** and the following Python packages:
 
